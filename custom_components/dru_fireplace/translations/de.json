@@ -1,0 +1,88 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Gerät ist bereits konfiguriert",
+      "no_devices_found": "Keine Geräte im Netzwerk gefunden"
+    },
+    "error": {
+      "auth_failed": "Der Kamin hat die Benutzeranmeldung abgelehnt.",
+      "cannot_connect": "Verbinden und Koppeln fehlgeschlagen. Kamin ausschalten, erneut absenden und die Pair-Taste der Fernbedienung 5 Sekunden gedrückt halten."
+    },
+    "flow_title": "{name}",
+    "progress": {
+      "connect": "Verbinde mit {name}. Falls der Kamin noch nicht mit dem Bluetooth-Adapter gekoppelt ist, jetzt die Pair-Taste der Fernbedienung 5 Sekunden halten, bis die Anzeige PAIR zeigt."
+    },
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Möchtest du {name} einrichten?"
+      },
+      "pair": {
+        "description": "Der Kaminempfänger spricht nur mit Bluetooth-Adaptern, mit denen er gekoppelt ist. Wenn {name} noch nie mit diesem Home-Assistant-Bluetooth-Adapter oder -Proxy gekoppelt war: Kamin ausschalten und die Fernbedienung bereithalten. Nach dem Absenden die Pair-Taste 5 Sekunden halten, bis die Anzeige PAIR zeigt. Ist er bereits gekoppelt, einfach absenden.",
+        "title": "Mit dem Kamin koppeln"
+      },
+      "user": {
+        "data": {
+          "address": "Gerät"
+        },
+        "description": "Wähle ein Gerät zum Einrichten"
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "fireplace": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manuell",
+              "thermostat": "Thermostat"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "flame_height": {
+        "name": "Flammenhöhe"
+      }
+    },
+    "sensor": {
+      "operating_state": {
+        "name": "Betriebszustand",
+        "state": {
+          "burning": "Brennt",
+          "igniting": "Zündet",
+          "off": "Aus"
+        }
+      },
+      "room_temperature": {
+        "name": "Raumtemperatur"
+      }
+    },
+    "switch": {
+      "eco": {
+        "name": "Eco-Modus"
+      },
+      "second_burner": {
+        "name": "Zusatzbrenner"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Der Befehl konnte nicht an den Kamin gesendet werden: {error}"
+    },
+    "connection_failed": {
+      "message": "Verbindung zum Kamin fehlgeschlagen: {error}"
+    },
+    "device_not_found": {
+      "message": "Kaminempfänger {address} nicht gefunden: {reason}"
+    },
+    "not_burning": {
+      "message": "Der Kamin muss brennen, um das zu ändern"
+    },
+    "update_failed": {
+      "message": "Der Kaminstatus konnte nicht gelesen werden: {error}"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "entity": {
+    "number": {
+      "flame_height": {
+        "default": "mdi:fire"
+      }
+    },
+    "sensor": {
+      "operating_state": {
+        "default": "mdi:fireplace-off",
+        "state": {
+          "burning": "mdi:fireplace",
+          "igniting": "mdi:fire-alert"
+        }
+      }
+    },
+    "switch": {
+      "eco": {
+        "default": "mdi:leaf"
+      },
+      "second_burner": {
+        "default": "mdi:fire-circle"
+      }
+    }
+  }
+}

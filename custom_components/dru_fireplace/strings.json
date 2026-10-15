@@ -1,0 +1,88 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured",
+      "no_devices_found": "No devices found on the network"
+    },
+    "error": {
+      "auth_failed": "The fireplace refused the user login.",
+      "cannot_connect": "Could not connect and pair. Switch the fireplace off, submit again and hold the pairing key on the remote control for 5 seconds."
+    },
+    "flow_title": "{name}",
+    "progress": {
+      "connect": "Connecting to {name}. If the fireplace is not yet bonded with the Bluetooth adapter, hold the pairing key on the remote control now for 5 seconds until the display shows PAIR."
+    },
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Do you want to set up {name}?"
+      },
+      "pair": {
+        "description": "The fireplace receiver only talks to Bluetooth adapters it is bonded with. If {name} has never been bonded with this Home Assistant Bluetooth adapter or proxy, switch the fireplace off and keep the remote control at hand: after you submit, hold its pairing key for 5 seconds until the display shows PAIR. If it is already bonded, just submit.",
+        "title": "Pair with the fireplace"
+      },
+      "user": {
+        "data": {
+          "address": "Device"
+        },
+        "description": "Choose a device to set up"
+      }
+    }
+  },
+  "entity": {
+    "climate": {
+      "fireplace": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "manual": "Manual",
+              "thermostat": "Thermostat"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "flame_height": {
+        "name": "Flame height"
+      }
+    },
+    "sensor": {
+      "operating_state": {
+        "name": "Operating state",
+        "state": {
+          "burning": "Burning",
+          "igniting": "Igniting",
+          "off": "Off"
+        }
+      },
+      "room_temperature": {
+        "name": "Room temperature"
+      }
+    },
+    "switch": {
+      "eco": {
+        "name": "Eco mode"
+      },
+      "second_burner": {
+        "name": "Second burner"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Sending the command to the fireplace failed: {error}"
+    },
+    "connection_failed": {
+      "message": "Connecting to the fireplace failed: {error}"
+    },
+    "device_not_found": {
+      "message": "Could not find the fireplace receiver {address}: {reason}"
+    },
+    "not_burning": {
+      "message": "The fireplace must be burning to change this"
+    },
+    "update_failed": {
+      "message": "Reading the fireplace status failed: {error}"
+    }
+  }
+}
