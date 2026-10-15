@@ -1,4 +1,4 @@
-# ha-dru-fireplace
+# DRU Fireplace Bluetooth
 
 Home Assistant integration for DRU gas fireplaces with the DFGT Bluetooth
 receiver (Maestro and Eco Wave models controlled by the DRU Fire app and the
@@ -43,11 +43,11 @@ never sends anything that was not observed from the app.
 ### HACS
 
 Add this repository as a custom repository (category *Integration*), download
-*DRU Fireplace* and restart Home Assistant.
+*DRU Fireplace Bluetooth* and restart Home Assistant.
 
 ### Manual
 
-Copy `custom_components/dru_fireplace` into the `custom_components` folder of
+Copy `custom_components/dru_ble` into the `custom_components` folder of
 your Home Assistant configuration and restart.
 
 ## Setup

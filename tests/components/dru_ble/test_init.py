@@ -12,7 +12,7 @@ from pytest_homeassistant_custom_component.common import (
     async_fire_time_changed,
 )
 
-from custom_components.dru_fireplace.diagnostics import (
+from custom_components.dru_ble.diagnostics import (
     async_get_config_entry_diagnostics,
 )
 from homeassistant.config_entries import ConfigEntryState
@@ -50,7 +50,7 @@ async def test_setup_retries_without_device(
 ) -> None:
     """Setup retries while the fireplace is out of range."""
     with patch(
-        "custom_components.dru_fireplace.coordinator.bluetooth.async_ble_device_from_address",
+        "custom_components.dru_ble.coordinator.bluetooth.async_ble_device_from_address",
         return_value=None,
     ):
         await hass.config_entries.async_setup(config_entry.entry_id)
@@ -64,7 +64,7 @@ async def test_setup_retries_on_connection_error(
 ) -> None:
     """Setup retries when connecting fails."""
     with patch(
-        "custom_components.dru_fireplace.client.establish_connection",
+        "custom_components.dru_ble.client.establish_connection",
         side_effect=BleakError("out of slots"),
     ):
         await hass.config_entries.async_setup(config_entry.entry_id)

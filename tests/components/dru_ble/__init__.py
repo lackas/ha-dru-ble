@@ -1,4 +1,4 @@
-"""Tests for the DRU Fireplace integration."""
+"""Tests for the DRU Fireplace Bluetooth integration."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import struct
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
-from custom_components.dru_fireplace.protocol import (
+from custom_components.dru_ble.protocol import (
     ACCESS_LEVEL_USER,
     AUTH_CODE_CHALLENGE,
     AUTH_CODE_GRANTED,

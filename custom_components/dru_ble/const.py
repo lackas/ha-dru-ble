@@ -1,8 +1,8 @@
-"""Constants for the DRU Fireplace integration."""
+"""Constants for the DRU Fireplace Bluetooth integration."""
 
 from datetime import timedelta
 
-DOMAIN = "dru_fireplace"
+DOMAIN = "dru_ble"
 MANUFACTURER = "DRU"
 
 # The receiver stores any float, the limits of the app are not known.

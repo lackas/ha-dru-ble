@@ -7,14 +7,14 @@ from unittest.mock import patch
 from bleak.exc import BleakError
 import pytest
 
-from custom_components.dru_fireplace.client import (
+from custom_components.dru_ble.client import (
     DruAuthenticationError,
     DruConnectionError,
     DruFireplaceClient,
     DruStateError,
     build_service_collection,
 )
-from custom_components.dru_fireplace.protocol import (
+from custom_components.dru_ble.protocol import (
     CHAR_AUTH_REQUEST,
     CHAR_AUTH_RESPONSE,
     CHAR_ECO,
@@ -48,7 +48,7 @@ async def connect(fireplace: FakeFireplace) -> tuple[DruFireplaceClient, list, l
     disconnects: list[bool] = []
     client = DruFireplaceClient(MAC, statuses.append, lambda: disconnects.append(True))
     with patch(
-        "custom_components.dru_fireplace.client.establish_connection",
+        "custom_components.dru_ble.client.establish_connection",
         side_effect=make_establish_connection(fireplace),
     ):
         await client.async_connect(make_ble_device())
@@ -92,7 +92,7 @@ async def test_connect_failure() -> None:
     client = DruFireplaceClient(MAC, lambda _: None, lambda: None)
     with (
         patch(
-            "custom_components.dru_fireplace.client.establish_connection",
+            "custom_components.dru_ble.client.establish_connection",
             side_effect=BleakError("no slot"),
         ),
         pytest.raises(DruConnectionError),

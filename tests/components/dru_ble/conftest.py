@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.dru_fireplace.const import DOMAIN
+from custom_components.dru_ble.const import DOMAIN
 from homeassistant.const import CONF_ADDRESS
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import format_mac
@@ -49,7 +49,7 @@ def fireplace(status: bytes) -> FakeFireplace:
 def mock_establish_connection(fireplace: FakeFireplace) -> Generator[FakeFireplace]:
     """Hand the fake fireplace to the client."""
     with patch(
-        "custom_components.dru_fireplace.client.establish_connection",
+        "custom_components.dru_ble.client.establish_connection",
         side_effect=make_establish_connection(fireplace),
     ):
         yield fireplace
@@ -59,7 +59,7 @@ def mock_establish_connection(fireplace: FakeFireplace) -> Generator[FakeFirepla
 def mock_ble_device() -> Generator[None]:
     """Let the coordinator find the fireplace."""
     with patch(
-        "custom_components.dru_fireplace.coordinator.bluetooth.async_ble_device_from_address",
+        "custom_components.dru_ble.coordinator.bluetooth.async_ble_device_from_address",
         return_value=make_ble_device(),
     ):
         yield

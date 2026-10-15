@@ -8,7 +8,7 @@ from bleak.exc import BleakError
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.dru_fireplace.const import DOMAIN
+from custom_components.dru_ble.const import DOMAIN
 from homeassistant import config_entries
 from homeassistant.const import CONF_ADDRESS
 from homeassistant.core import HomeAssistant
@@ -21,7 +21,7 @@ from . import MAC, NAME, FakeFireplace, make_establish_connection, make_service_
 def mock_discovered() -> None:
     """Let the user step find the fireplace."""
     with patch(
-        "custom_components.dru_fireplace.config_flow.async_discovered_service_info",
+        "custom_components.dru_ble.config_flow.async_discovered_service_info",
         return_value=[
             make_service_info(),
             make_service_info("Other", "AA:BB:CC:DD:EE:FF", fireplace=False),
@@ -33,7 +33,7 @@ def mock_discovered() -> None:
 @pytest.fixture(autouse=True)
 def no_pairing_window() -> None:
     """Do not retry for a minute in tests."""
-    with patch("custom_components.dru_fireplace.config_flow.PAIRING_WINDOW", 0):
+    with patch("custom_components.dru_ble.config_flow.PAIRING_WINDOW", 0):
         yield
 
 
@@ -79,7 +79,7 @@ async def test_user_flow(
 async def test_user_flow_no_devices(hass: HomeAssistant) -> None:
     """Without a fireplace in range the flow aborts."""
     with patch(
-        "custom_components.dru_fireplace.config_flow.async_discovered_service_info",
+        "custom_components.dru_ble.config_flow.async_discovered_service_info",
         return_value=[],
     ):
         result = await hass.config_entries.flow.async_init(
@@ -147,7 +147,7 @@ async def test_pairing_fails_then_succeeds(
         result["flow_id"], {CONF_ADDRESS: MAC}
     )
     with patch(
-        "custom_components.dru_fireplace.client.establish_connection",
+        "custom_components.dru_ble.client.establish_connection",
         side_effect=BleakError("Pairing failed due to error: 5"),
     ):
         result = await finish_pairing(hass, result)
@@ -157,7 +157,7 @@ async def test_pairing_fails_then_succeeds(
 
     fireplace.auth_ok = False
     with patch(
-        "custom_components.dru_fireplace.client.establish_connection",
+        "custom_components.dru_ble.client.establish_connection",
         side_effect=make_establish_connection(fireplace),
     ):
         result = await finish_pairing(hass, result)
@@ -166,7 +166,7 @@ async def test_pairing_fails_then_succeeds(
 
     fireplace.auth_ok = True
     with patch(
-        "custom_components.dru_fireplace.client.establish_connection",
+        "custom_components.dru_ble.client.establish_connection",
         side_effect=make_establish_connection(fireplace),
     ):
         result = await finish_pairing(hass, result)

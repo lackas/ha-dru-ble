@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from custom_components.dru_fireplace.protocol import (
+from custom_components.dru_ble.protocol import (
     CHAR_ECO,
     CHAR_FLAME,
     CHAR_TARGET_TEMPERATURE,

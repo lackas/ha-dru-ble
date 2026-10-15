@@ -1,4 +1,4 @@
-"""Config flow for the DRU Fireplace integration."""
+"""Config flow for the DRU Fireplace Bluetooth integration."""
 
 from __future__ import annotations
 

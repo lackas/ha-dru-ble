@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 HACS integration for DRU gas fireplaces with the DFGT Bluetooth receiver.
-Domain `dru_fireplace`. Protocol analysis, HCI captures and the standalone test
+Domain `dru_ble`. Protocol analysis, HCI captures and the standalone test
 tools live outside this repo in `~/src/dru` (PROTOCOL.md, AUTH_PROTOCOL.md,
 GATT_SERVICES.md, PROXY_CONNECT.md).
 

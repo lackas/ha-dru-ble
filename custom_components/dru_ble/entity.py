@@ -1,4 +1,4 @@
-"""Base entity for the DRU Fireplace integration."""
+"""Base entity for the DRU Fireplace Bluetooth integration."""
 
 from __future__ import annotations
 

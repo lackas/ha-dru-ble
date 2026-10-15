@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from custom_components.dru_fireplace.protocol import (
+from custom_components.dru_ble.protocol import (
     FLAME_LEVEL_KEEP,
     FLAME_LEVEL_THERMOSTAT,
     IGNITE_COMMAND,
