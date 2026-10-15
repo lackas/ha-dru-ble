@@ -110,7 +110,12 @@ async def test_diagnostics(hass: HomeAssistant, setup_entry: MockConfigEntry) ->
     """Diagnostics expose the identity and the decoded status."""
     diagnostics = await async_get_config_entry_diagnostics(hass, setup_entry)
     assert diagnostics["connected"] is True
-    assert diagnostics["identity"]["serial_number"] == "TEST0000000000000001"
+    assert diagnostics["entry"] == {
+        "title": "**REDACTED**",
+        "data": {"address": "**REDACTED**"},
+    }
+    assert diagnostics["identity"]["serial_number"] == "**REDACTED**"
+    assert diagnostics["identity"]["model_number"] == "P2025.002 V5"
     assert diagnostics["status"]["operating_state"] == "burning"
     assert diagnostics["status"]["flame"] == 82
     assert diagnostics["status"]["raw"] == "03005200000000140000b84115aea94100"
