@@ -9,6 +9,10 @@ a local adapter or through an ESPHome Bluetooth proxy, and keeps the connection
 open so that every change made with the remote control or the app shows up in
 Home Assistant right away.
 
+Fireplaces with the older DRU/Honeywell Ethernet bridge (BRDG-03EM01, Modbus
+TCP) instead of the Bluetooth receiver are covered by
+[rhannink/ha-dru-fireplace](https://github.com/rhannink/ha-dru-fireplace).
+
 ## Entities
 
 | Entity | What it does |
