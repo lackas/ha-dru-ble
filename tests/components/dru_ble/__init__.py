@@ -8,6 +8,7 @@ import struct
 
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
+from bleak.exc import BleakError
 
 from custom_components.dru_ble.protocol import (
     ACCESS_LEVEL_USER,
@@ -15,6 +16,7 @@ from custom_components.dru_ble.protocol import (
     AUTH_CODE_GRANTED,
     CHAR_AUTH_REQUEST,
     CHAR_AUTH_RESPONSE,
+    CHAR_CAPABILITIES,
     CHAR_ECO,
     CHAR_FIREPLACE_TYPE,
     CHAR_FLAME,
@@ -41,6 +43,13 @@ STATUS_BURNING_SECOND_BURNER = bytes.fromhex("04000a00000000140000b84115aea94100
 STATUS_THERMOSTAT_ECO = bytes.fromhex("44203400000000140000b84115aea94100")
 # Captured while the fireplace was off and the remote out of reach.
 STATUS_OFF_NO_ROOM_TEMPERATURE = bytes.fromhex("00015000640000140000bc41ae47a1c300")
+# Burning with the lamp output (relay 1) switched on by the remote's lamp key.
+STATUS_BURNING_LIGHT_ON = bytes.fromhex("04016400640000140000bc41a470af4100")
+
+# Capabilities of the author's fireplace: second burner and relay 1.
+CAPABILITIES = bytes.fromhex("3e1f0f")
+# The same without second burner and relay 1.
+CAPABILITIES_NO_EXTRAS = bytes.fromhex("3c100f")
 
 CHALLENGE = bytes.fromhex("a8eccac39dd88e21f8d15b0890c1907c")
 MODEL_NUMBER = b"P2025.002 V5\0\0\0\0\0\0\0\0"
@@ -51,9 +60,15 @@ FIREPLACE_TYPE = b"MS75TALL TNNL cer\0$l"
 class FakeFireplace:
     """A bleak client that behaves like the fireplace receiver."""
 
-    def __init__(self, status: bytes = STATUS_BURNING, auth_ok: bool = True) -> None:
+    def __init__(
+        self,
+        status: bytes = STATUS_BURNING,
+        auth_ok: bool = True,
+        capabilities: bytes | None = CAPABILITIES,
+    ) -> None:
         """Initialize the fake."""
         self.status = bytearray(status)
+        self.capabilities = capabilities
         self.auth_ok = auth_ok
         self.writes: list[tuple[str, bytes]] = []
         self.notifications: dict[str, Callable] = {}
@@ -71,6 +86,10 @@ class FakeFireplace:
 
     async def read_gatt_char(self, uuid: str) -> bytearray:
         """Return the characteristic value."""
+        if uuid == CHAR_CAPABILITIES:
+            if self.capabilities is None:
+                raise BleakError(f"Characteristic {uuid} was not found")
+            return bytearray(self.capabilities)
         values = {
             CHAR_STATUS: bytes(self.status),
             CHAR_MODEL_NUMBER: MODEL_NUMBER,
@@ -109,6 +128,13 @@ class FakeFireplace:
         self.is_connected = False
         assert self.disconnected_callback is not None
         self.disconnected_callback(self)
+
+    def press_light_key(self) -> None:
+        """Toggle relay 1 like the lamp key of the remote control."""
+        on = not self.status[1] & 0x01
+        self.status[1] = (self.status[1] & ~0x03) | (0x01 if on else 0x00)
+        self.status[4] = 100 if on else 0
+        self.indicate_status()
 
     def indicate_status(self) -> None:
         """Send the current status as indication."""

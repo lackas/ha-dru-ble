@@ -20,9 +20,14 @@ TCP) instead of the Bluetooth receiver are covered by
 | Climate | Off / heat (ignition and shutdown), target temperature, room temperature, preset *manual* (flame set by hand) or *thermostat* (the receiver regulates the flame) |
 | Number *Flame height* | Flame height in percent; setting it switches back to manual control |
 | Switch *Eco mode* | Eco mode, independent of manual/thermostat |
-| Switch *Second burner* | Second burner on or off |
+| Switch *Second burner* | Second burner on or off; only for fireplaces that have one |
+| Binary sensor *Lamp* | Lamp output (relay 1), switched by the lamp key of the remote control; usable as a trigger, for example for a light that is not wired to the receiver |
 | Sensor *Room temperature* | Measured by the remote control; unknown while the remote is out of reach |
 | Sensor *Operating state* | off, igniting, burning |
+
+The receiver reports its equipment the same way it does to the app, so the
+second burner switch and the lamp sensor only appear on fireplaces that have
+them.
 
 All commands are sent exactly as the official app sends them. The integration
 never sends anything that was not observed from the app.

@@ -29,6 +29,11 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "light": {
+        "name": "Lamp"
+      }
+    },
     "climate": {
       "fireplace": {
         "state_attributes": {

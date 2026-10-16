@@ -15,8 +15,10 @@ from custom_components.dru_ble.client import (
     build_service_collection,
 )
 from custom_components.dru_ble.protocol import (
+    CCCD_UUID,
     CHAR_AUTH_REQUEST,
     CHAR_AUTH_RESPONSE,
+    CHAR_CAPABILITIES,
     CHAR_ECO,
     CHAR_FLAME,
     CHAR_LOGIN,
@@ -72,6 +74,9 @@ async def test_connect_authenticates_and_reads() -> None:
     assert client.identity.model_number == "P2025.002 V5"
     assert client.identity.serial_number == "TEST0000000000000001"
     assert client.identity.fireplace_type == "MS75TALL TNNL cer"
+    assert client.capabilities is not None
+    assert client.capabilities.second_burner
+    assert client.capabilities.light
     assert statuses == []
     fireplace.status[2] = 50
     fireplace.indicate_status()
@@ -179,3 +184,13 @@ def test_service_collection() -> None:
     assert cccd is not None
     assert cccd.handle == 0x0010
     assert services.get_characteristic(CHAR_AUTH_REQUEST).handle == 0x0078
+    capabilities = services.get_characteristic(CHAR_CAPABILITIES)
+    assert capabilities.handle == 0x0020
+    assert capabilities.get_descriptor(CCCD_UUID).handle == 0x0021
+
+
+async def test_connect_without_capabilities() -> None:
+    """A receiver without readable capabilities still connects."""
+    client, _, _ = await connect(FakeFireplace(capabilities=None))
+    assert client.is_connected
+    assert client.capabilities is None

@@ -29,6 +29,7 @@ from .protocol import (
     CHALLENGE_LENGTH,
     CHAR_AUTH_REQUEST,
     CHAR_AUTH_RESPONSE,
+    CHAR_CAPABILITIES,
     CHAR_ECO,
     CHAR_FIREPLACE_TYPE,
     CHAR_FLAME,
@@ -43,6 +44,7 @@ from .protocol import (
     GATT_TABLE,
     IGNITE_COMMAND,
     OFF_COMMAND,
+    FireplaceCapabilities,
     FireplaceStatus,
     auth_request_frame,
     auth_secret_frame,
@@ -134,6 +136,7 @@ class DruFireplaceClient:
         self._lock = asyncio.Lock()
         self._status: FireplaceStatus | None = None
         self._identity = DruIdentity()
+        self._capabilities: FireplaceCapabilities | None = None
 
     @property
     def is_connected(self) -> bool:
@@ -149,6 +152,11 @@ class DruFireplaceClient:
     def identity(self) -> DruIdentity:
         """Return the identity read from the receiver."""
         return self._identity
+
+    @property
+    def capabilities(self) -> FireplaceCapabilities | None:
+        """Return the capabilities, None if the receiver did not report them."""
+        return self._capabilities
 
     async def async_connect(self, ble_device: BLEDevice) -> None:
         """Connect, pair if needed, authenticate and subscribe to the status."""
@@ -170,6 +178,7 @@ class DruFireplaceClient:
                 await self._async_authenticate(client)
                 await client.start_notify(CHAR_STATUS, self._handle_status)
                 self._identity = await self._async_read_identity(client)
+                self._capabilities = await self._async_read_capabilities(client)
                 self._status = FireplaceStatus.from_bytes(
                     await client.read_gatt_char(CHAR_STATUS)
                 )
@@ -315,6 +324,17 @@ class DruFireplaceClient:
                 _LOGGER.debug("%s: reading %s failed: %s", self._address, key, err)
                 values[key] = None
         return DruIdentity(**values)
+
+    async def _async_read_capabilities(
+        self, client: BleakClient
+    ) -> FireplaceCapabilities | None:
+        try:
+            return FireplaceCapabilities.from_bytes(
+                await client.read_gatt_char(CHAR_CAPABILITIES)
+            )
+        except (*BLEAK_RETRY_EXCEPTIONS, ValueError) as err:
+            _LOGGER.debug("%s: reading capabilities failed: %s", self._address, err)
+            return None
 
     def _handle_status(self, _: BleakGATTCharacteristic, data: bytearray) -> None:
         try:

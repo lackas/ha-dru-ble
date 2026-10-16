@@ -8,6 +8,7 @@ from homeassistant.core import HomeAssistant
 from .coordinator import DruFireplaceConfigEntry, DruFireplaceCoordinator
 
 PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
     Platform.CLIMATE,
     Platform.NUMBER,
     Platform.SENSOR,

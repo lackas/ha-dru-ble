@@ -9,6 +9,7 @@ from custom_components.dru_ble.protocol import (
     FLAME_LEVEL_THERMOSTAT,
     IGNITE_COMMAND,
     OFF_COMMAND,
+    FireplaceCapabilities,
     FireplaceStatus,
     OperatingState,
     auth_request_frame,
@@ -22,9 +23,12 @@ from custom_components.dru_ble.protocol import (
 )
 
 from . import (
+    CAPABILITIES,
+    CAPABILITIES_NO_EXTRAS,
     CHALLENGE,
     FIREPLACE_TYPE,
     STATUS_BURNING,
+    STATUS_BURNING_LIGHT_ON,
     STATUS_BURNING_SECOND_BURNER,
     STATUS_IGNITING,
     STATUS_OFF,
@@ -97,6 +101,27 @@ def test_status_unknown_state_and_implausible_room_temperature() -> None:
     assert unknown.is_on
     with pytest.raises(ValueError):
         FireplaceStatus.from_bytes(b"\x00" * 10)
+
+
+def test_status_light() -> None:
+    """Relay 1 (lamp output) is decoded from byte 1."""
+    assert not FireplaceStatus.from_bytes(STATUS_BURNING).light
+    status = FireplaceStatus.from_bytes(STATUS_BURNING_LIGHT_ON)
+    assert status.light
+    assert status.second_burner
+    assert FireplaceStatus.from_bytes(STATUS_OFF_NO_ROOM_TEMPERATURE).light
+
+
+def test_capabilities() -> None:
+    """Capabilities are decoded like the app does."""
+    capabilities = FireplaceCapabilities.from_bytes(CAPABILITIES)
+    assert capabilities.second_burner
+    assert capabilities.light
+    capabilities = FireplaceCapabilities.from_bytes(CAPABILITIES_NO_EXTRAS)
+    assert not capabilities.second_burner
+    assert not capabilities.light
+    with pytest.raises(ValueError):
+        FireplaceCapabilities.from_bytes(b"\x3e")
 
 
 def test_commands() -> None:

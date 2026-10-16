@@ -14,6 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import format_mac
 
 from . import (
+    CAPABILITIES,
     MAC,
     NAME,
     STATUS_BURNING,
@@ -40,9 +41,15 @@ def status() -> bytes:
 
 
 @pytest.fixture
-def fireplace(status: bytes) -> FakeFireplace:
+def capabilities() -> bytes | None:
+    """Return the capabilities of the fake fireplace, None if unreadable."""
+    return CAPABILITIES
+
+
+@pytest.fixture
+def fireplace(status: bytes, capabilities: bytes | None) -> FakeFireplace:
     """Return the fake fireplace."""
-    return FakeFireplace(status)
+    return FakeFireplace(status, capabilities=capabilities)
 
 
 @pytest.fixture

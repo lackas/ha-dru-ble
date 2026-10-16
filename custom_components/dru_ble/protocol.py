@@ -35,6 +35,7 @@ SERVICE_CLIENT = _service("5500ee00")
 SERVICE_DEVICE_INFORMATION = "0000180a-0000-1000-8000-00805f9b34fb"
 
 CHAR_STATUS = _characteristic("00002430")
+CHAR_CAPABILITIES = _characteristic("10002430")
 CHAR_TARGET_TEMPERATURE = _characteristic("00002309")
 CHAR_FLAME = _characteristic("00002431")
 CHAR_ECO = _characteristic("00002432")
@@ -79,6 +80,7 @@ GATT_TABLE: tuple[GattService, ...] = (
             GattCharacteristic(0x0012, CHAR_TARGET_TEMPERATURE, ("write",)),
             GattCharacteristic(0x0016, CHAR_FLAME, ("write",)),
             GattCharacteristic(0x001E, CHAR_ECO, ("write",)),
+            GattCharacteristic(0x0020, CHAR_CAPABILITIES, ("read", "indicate"), 0x0021),
         ),
     ),
     GattService(
@@ -167,6 +169,13 @@ _STATE_ECO_BIT = 0x40
 
 _FLAG_ADJUSTING = 0x08
 _FLAG_THERMOSTAT = 0x20
+# Relay 1, which the remote's lamp key switches. The app reads it as
+# "lightStatus"; 1 means on.
+_LIGHT_STATUS_MASK = 0x03
+_LIGHT_STATUS_ON = 0x01
+
+_CAPABILITY_SECOND_BURNER = 0x02
+_CAPABILITY_LIGHT_MASK = 0x0F
 
 
 class OperatingState(StrEnum):
@@ -245,6 +254,35 @@ class FireplaceStatus:
     def adjusting(self) -> bool:
         """Return True while the burner is changing state."""
         return bool(self.flags & _FLAG_ADJUSTING)
+
+    @property
+    def light(self) -> bool:
+        """Return True if relay 1, the lamp output, is on."""
+        return (self.flags & _LIGHT_STATUS_MASK) == _LIGHT_STATUS_ON
+
+
+@dataclass(frozen=True, slots=True)
+class FireplaceCapabilities:
+    """What the fireplace is equipped with, decoded like the app does."""
+
+    raw: bytes
+
+    @classmethod
+    def from_bytes(cls, data: bytes) -> FireplaceCapabilities:
+        """Decode the capabilities characteristic."""
+        if len(data) < 2:
+            raise ValueError(f"capabilities too short: {data.hex()}")
+        return cls(raw=bytes(data))
+
+    @property
+    def second_burner(self) -> bool:
+        """Return True if the fireplace has a second burner."""
+        return bool(self.raw[0] & _CAPABILITY_SECOND_BURNER)
+
+    @property
+    def light(self) -> bool:
+        """Return True if relay 1 (lamp output) is available."""
+        return bool(self.raw[1] & _CAPABILITY_LIGHT_MASK)
 
 
 # ---------------------------------------------------------------------------

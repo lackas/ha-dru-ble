@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from .client import DruFireplaceClient
 from .coordinator import DruFireplaceConfigEntry, DruFireplaceCoordinator
 from .entity import DruFireplaceEntity
-from .protocol import FireplaceStatus
+from .protocol import FireplaceCapabilities, FireplaceStatus
 
 PARALLEL_UPDATES = 1
 
@@ -24,6 +24,7 @@ class DruSwitchEntityDescription(SwitchEntityDescription):
 
     is_on_fn: Callable[[FireplaceStatus], bool]
     set_fn: Callable[[DruFireplaceClient, bool], Coroutine[Any, Any, None]]
+    exists_fn: Callable[[FireplaceCapabilities | None], bool] = lambda _: True
 
 
 SWITCHES: tuple[DruSwitchEntityDescription, ...] = (
@@ -38,6 +39,9 @@ SWITCHES: tuple[DruSwitchEntityDescription, ...] = (
         translation_key="second_burner",
         is_on_fn=lambda status: status.second_burner,
         set_fn=lambda client, enabled: client.async_set_second_burner(enabled),
+        exists_fn=lambda capabilities: (
+            capabilities is None or capabilities.second_burner
+        ),
     ),
 )
 
@@ -48,8 +52,12 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the switch entities."""
+    coordinator = entry.runtime_data
+    capabilities = coordinator.client.capabilities
     async_add_entities(
-        DruFireplaceSwitch(entry.runtime_data, description) for description in SWITCHES
+        DruFireplaceSwitch(coordinator, description)
+        for description in SWITCHES
+        if description.exists_fn(capabilities)
     )
 
 

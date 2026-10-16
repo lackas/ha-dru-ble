@@ -39,6 +39,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 
 from . import (
+    CAPABILITIES_NO_EXTRAS,
     STATUS_BURNING_SECOND_BURNER,
     STATUS_OFF,
     STATUS_OFF_NO_ROOM_TEMPERATURE,
@@ -53,6 +54,7 @@ ECO = "switch.dfgt_00test00_eco_mode"
 SECOND_BURNER = "switch.dfgt_00test00_second_burner"
 ROOM_TEMPERATURE = "sensor.dfgt_00test00_room_temperature"
 OPERATING_STATE = "sensor.dfgt_00test00_operating_state"
+LIGHT = "binary_sensor.dfgt_00test00_lamp"
 
 
 @pytest.mark.usefixtures("setup_entry")
@@ -201,3 +203,36 @@ async def test_number_and_switches(
     )
     assert fireplace.commands[-1] == (CHAR_ECO, b"\x00")
     assert hass.states.get(ECO).state == STATE_OFF
+
+
+@pytest.mark.parametrize("status", [STATUS_OFF])
+@pytest.mark.usefixtures("setup_entry")
+async def test_light_follows_lamp_key(
+    hass: HomeAssistant, fireplace: FakeFireplace
+) -> None:
+    """The lamp sensor follows relay 1, also while the fireplace is off."""
+    assert hass.states.get(LIGHT).state == STATE_OFF
+    fireplace.press_light_key()
+    await hass.async_block_till_done()
+    assert hass.states.get(LIGHT).state == STATE_ON
+    fireplace.press_light_key()
+    await hass.async_block_till_done()
+    assert hass.states.get(LIGHT).state == STATE_OFF
+    assert fireplace.commands == []
+
+
+@pytest.mark.parametrize("capabilities", [CAPABILITIES_NO_EXTRAS])
+@pytest.mark.usefixtures("setup_entry")
+async def test_missing_equipment_has_no_entities(hass: HomeAssistant) -> None:
+    """Without second burner and relay 1 their entities are not created."""
+    assert hass.states.get(SECOND_BURNER) is None
+    assert hass.states.get(LIGHT) is None
+    assert hass.states.get(ECO) is not None
+
+
+@pytest.mark.parametrize("capabilities", [None])
+@pytest.mark.usefixtures("setup_entry")
+async def test_unknown_capabilities_keep_entities(hass: HomeAssistant) -> None:
+    """If the capabilities cannot be read, all entities are created."""
+    assert hass.states.get(SECOND_BURNER) is not None
+    assert hass.states.get(LIGHT) is not None

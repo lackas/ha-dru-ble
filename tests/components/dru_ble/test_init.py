@@ -119,3 +119,9 @@ async def test_diagnostics(hass: HomeAssistant, setup_entry: MockConfigEntry) ->
     assert diagnostics["status"]["operating_state"] == "burning"
     assert diagnostics["status"]["flame"] == 82
     assert diagnostics["status"]["raw"] == "03005200000000140000b84115aea94100"
+    assert diagnostics["status"]["light"] is False
+    assert diagnostics["capabilities"] == {
+        "raw": "3e1f0f",
+        "second_burner": True,
+        "light": True,
+    }

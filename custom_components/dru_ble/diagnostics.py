@@ -20,10 +20,18 @@ async def async_get_config_entry_diagnostics(
     """Return diagnostics for a config entry."""
     coordinator = entry.runtime_data
     status = coordinator.data
+    capabilities = coordinator.client.capabilities
     return async_redact_data(
         {
             "entry": {"title": entry.title, "data": dict(entry.data)},
             "identity": asdict(coordinator.client.identity),
+            "capabilities": None
+            if capabilities is None
+            else {
+                "raw": capabilities.raw.hex(),
+                "second_burner": capabilities.second_burner,
+                "light": capabilities.light,
+            },
             "connected": coordinator.client.is_connected,
             "status": None
             if status is None
@@ -37,6 +45,7 @@ async def async_get_config_entry_diagnostics(
                 "eco": status.eco,
                 "second_burner": status.second_burner,
                 "adjusting": status.adjusting,
+                "light": status.light,
             },
         },
         TO_REDACT,
